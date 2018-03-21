@@ -1,5 +1,6 @@
 import speech_recognition as sr
 import yaml
+from brain import brain
 from GreyMatter.SenseCells.tts import tts
 
 profile = open('profile.yaml')
@@ -13,16 +14,25 @@ tts('Welcome ' + name + ', systems are now ready to run. How can I help you?')
 
 def main():
     r = sr.Recognizer()
-    with sr.Microphone() as source:
-        print("Say something!")
-        audio = r.listen(source)
-    try:
-        speech_text = r.recognize_google(audio).lower().replace("'", "")
-        print("Melissa thinks you said '" + speech_text + "'")
-    except sr.UnknownValueError:
-        print("Melissa could not understand audio")
-    except sr.RequestError as e:
-        print("Could not request results from Google Speech Recognition service; {0}".format(e))
-        tts(speech_text)
+
+    while True:
+        with sr.Microphone() as source:
+            print("Say something!")
+            audio = r.listen(source)
+
+        # Things to ask Melissa:
+        # Describe me. How am I? How do I look?
+        # Who am I?
+        # How are you?
+        # What is the time?
+
+        try:
+            speech_text = r.recognize_google(audio).lower().replace("'", "")
+            print("Melissa thinks you said '" + speech_text + "'")
+        except sr.UnknownValueError:
+            print("Melissa could not understand audio")
+        except sr.RequestError as e:
+            print("Could not request results from Google Speech Recognition service; {0}".format(e))
+        brain(name, speech_text)
 
 main()
